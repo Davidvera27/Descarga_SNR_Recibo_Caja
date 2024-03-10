@@ -8,10 +8,9 @@ from selenium.webdriver.chrome.options import Options
 from inicio_sesion import iniciar_sesion
 from buscar_documentos import buscar_documentos
 from descargar_archivos import descargar_archivo
+import Descargar_Rentas as descargar_rentas
 
-# Función para iniciar el proceso en un hilo aparte
-def iniciar_proceso():
-    Thread(target=consultar_anexos).start()
+
 
 # Función principal para consultar anexos
 def consultar_anexos():
@@ -55,6 +54,11 @@ def proceso2():
 def proceso3():
     messagebox.showinfo("Mensaje", "Este es el proceso 3")
 
+# Función para llamar a la función consultar_anexos del módulo Descargar_Rentas
+def proceso4():
+    # Llama a la función consultar_anexos del módulo Descargar_Rentas
+    descargar_rentas.consultar_anexos()
+
 # Crear la ventana principal
 root = tk.Tk()
 root.title("Interfaz de Usuario")
@@ -68,6 +72,9 @@ contraseña_entry = tk.Entry(root, show="*")
 contraseña_entry.grid(row=1, column=1, padx=5, pady=5)
 
 # Botón para iniciar el proceso
+# Función para iniciar el proceso en un hilo aparte
+def iniciar_proceso():
+    Thread(target=consultar_anexos).start()
 tk.Button(root, text="Iniciar Proceso", command=iniciar_proceso).grid(row=2, columnspan=2, padx=5, pady=5)
 
 # Botones para procesos futuros
@@ -75,4 +82,8 @@ tk.Button(root, text="Proceso 1", command=proceso1).grid(row=3, column=0, padx=5
 tk.Button(root, text="Proceso 2", command=proceso2).grid(row=3, column=1, padx=5, pady=5)
 tk.Button(root, text="Proceso 3", command=proceso3).grid(row=4, columnspan=2, padx=5, pady=5)
 
+# Botón para llamar a la función de Descargar_Rentas
+tk.Button(root, text="Consultar Anexos", command=proceso4).grid(row=5, columnspan=2, padx=5, pady=5)
+
+# Mostrar la interfaz de usuario
 root.mainloop()
