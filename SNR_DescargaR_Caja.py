@@ -95,21 +95,12 @@ def consultar_anexos():
                         # Obtener el nombre del último archivo descargado
                         if archivos_en_descargas:
                             nombre_archivo = archivos_en_descargas[-1]
-                            nuevo_nombre = f"BR{row[1].value}.pdf"
+                            numero_escritura = row[1].value
+                            nuevo_nombre = f"BR{numero_escritura}.pdf"
                             ruta_archivo_original = os.path.join("E:/Downloads", nombre_archivo)
                             ruta_archivo_nuevo = os.path.join("E:/Downloads", nuevo_nombre)
-                            
-                            # Esperar hasta que el archivo esté completamente descargado
-                            tiempo_inicial = time.time()
-                            while time.time() - tiempo_inicial < 60:
-                                if os.path.exists(ruta_archivo_original):
-                                    # Renombrar el archivo
-                                    os.rename(ruta_archivo_original, ruta_archivo_nuevo)
-                                    print(f"Archivo PDF descargado y guardado correctamente como {nuevo_nombre}")
-                                    break
-                                time.sleep(1)
-                            else:
-                                print("El archivo no se ha descargado correctamente.")
+                            os.rename(ruta_archivo_original, ruta_archivo_nuevo)
+                            print(f"Archivo PDF descargado y guardado correctamente como {nuevo_nombre}")
                     except NoSuchElementException:
                         print(f"Escritura {row[1].value} = 'Recibo de caja Pendiente'")
                 else:
@@ -120,3 +111,4 @@ def consultar_anexos():
 
 # Llamar a la función para iniciar la consulta
 consultar_anexos()
+    
