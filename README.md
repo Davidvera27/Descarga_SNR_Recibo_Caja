@@ -4,7 +4,6 @@ Este código de Python es un script que automatiza la tarea de consultar y desca
 
 Propósito del Script:
 El script realiza las siguientes acciones:
-
 Inicia sesión en un sitio web.
 Lee datos de un archivo Excel.
 Para cada fila en el archivo Excel:
