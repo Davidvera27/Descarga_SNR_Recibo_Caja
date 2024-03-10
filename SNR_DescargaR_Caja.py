@@ -110,13 +110,10 @@ def consultar_anexos():
                                 time.sleep(1)
                             else:
                                 print("El archivo no se ha descargado correctamente.")
-
                     except NoSuchElementException:
                         print(f"Escritura {row[1].value} = 'Recibo de caja Pendiente'")
-
                 else:
                     print(f"La escritura {row[1].value} no contiene NIR")
-
     finally:
         # Cerrar el navegador al finalizar
         driver.quit()
