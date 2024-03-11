@@ -158,7 +158,7 @@ contraseña_entry.grid(row=1, column=1, padx=5, pady=5)
 # Botón para iniciar el proceso
 def iniciar_proceso():
     Thread(target=consultar_anexos).start()
-tk.Button(root, text="Iniciar Proceso", command=iniciar_proceso).grid(row=2, columnspan=2, padx=5, pady=5)
+tk.Button(root, text="Descargar Recibo de caja", command=iniciar_proceso).grid(row=2, columnspan=2, padx=5, pady=5)
 
 # Botones para procesos futuros
 # tk.Button(root, text="Proceso 1", command=proceso1).grid(row=3, column=0, padx=5, pady=5)
@@ -168,7 +168,7 @@ tk.Button(root, text="Iniciar Proceso", command=iniciar_proceso).grid(row=2, col
 # Botón para llamar a la función de Descargar_Rentas
 def proceso4():
     descargar_rentas.consultar_anexos()
-tk.Button(root, text="Consultar Anexos", command=proceso4).grid(row=5, columnspan=2, padx=5, pady=5)
+tk.Button(root, text="Consultar Liquidación de Rentas", command=proceso4).grid(row=5, columnspan=2, padx=5, pady=5)
 
 # Mostrar la interfaz de usuario
 root.mainloop()
