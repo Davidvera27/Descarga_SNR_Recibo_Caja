@@ -143,6 +143,17 @@ def proceso2():
 def proceso3():
     messagebox.showinfo("Mensaje", "Este es el proceso 3")
 
+# Botón para consultar el recibo de pago
+def consultar_recibo_pago():
+    import os
+    import sys
+    sys.path.append(os.path.abspath("PYTHON/WebScraping/Excel/Descarga_SNR_Recibo_Caja"))
+    import Descargar_ReciboPago
+
+# Botón para llamar a la función de Descargar Rentas
+def consultar_rentas():
+    descargar_rentas.consultar_anexos()
+
 # Crear la ventana principal
 root = tk.Tk()
 root.title("Interfaz de Usuario")
@@ -165,10 +176,13 @@ tk.Button(root, text="Descargar Recibo de caja", command=iniciar_proceso).grid(r
 # tk.Button(root, text="Proceso 2", command=proceso2).grid(row=3, column=1, padx=5, pady=5)
 # tk.Button(root, text="Proceso 3", command=proceso3).grid(row=4, columnspan=2, padx=5, pady=5)
 
-# Botón para llamar a la función de Descargar_Rentas
+# Botón para llamar a la función de Consultar Recibo de Pago
+tk.Button(root, text="Consultar Recibo de Pago", command=consultar_recibo_pago).grid(row=3, columnspan=2, padx=5, pady=5)
+
+# Botón para llamar a la función de Consultar Liquidación de Rentas
 def proceso4():
     descargar_rentas.consultar_anexos()
-tk.Button(root, text="Consultar Liquidación de Rentas", command=proceso4).grid(row=5, columnspan=2, padx=5, pady=5)
+tk.Button(root, text="Consultar Liquidación de Rentas", command=proceso4).grid(row=4, columnspan=2, padx=5, pady=5)
 
 # Mostrar la interfaz de usuario
 root.mainloop()
