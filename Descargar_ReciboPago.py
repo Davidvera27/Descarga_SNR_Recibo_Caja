@@ -32,7 +32,16 @@ def consultar_nir(driver, nir, escritura_numero):
         
         # Buscar elementos dentro del contenedor principal para determinar el estado del recibo
         container = driver.find_element(By.CSS_SELECTOR, "div.ui-g-12.ui-md-6.ui-gl-6")
-        if container.find_elements(By.XPATH, "//div[contains(text(), 'PAGAR EN LÍNEA')]"):
+        
+        # Nueva búsqueda para verificar la presencia del nuevo texto en el contenedor
+        rechazado_texto = container.find_elements(By.XPATH, "//label[contains(text(), 'Documento en estado Ingreso Rechazado')]")
+        
+        # Lógica para imprimir la respuesta de acuerdo a la nueva búsqueda
+        if rechazado_texto:
+            print(f"Escriitura {escritura_numero}: Proceso Rechazado. Valide correcciones y envíe nuevamente.")
+        elif container.find_elements(By.XPATH, "//label[contains(text(), 'Se deben pagar todos los impuestos de registro para generar el recibo de pago')]") and container.find_elements(By.XPATH, "//label[contains(text(), 'Documento en estado Pago Pendiente')]"):
+            print(f"Escriitura {escritura_numero}: Aún no se ha cargado boleta de rentas para el caso.")
+        elif container.find_elements(By.XPATH, "//div[contains(text(), 'PAGAR EN LÍNEA')]"):
             print(f"Escriitura {escritura_numero}: Recibo de pago descargado y sin cancelar")
         elif container.find_elements(By.XPATH, "//span[@class='ui-button-text ui-c' and contains(text(), 'Visualizar y generar')]"):
             print(f"Escriitura {escritura_numero}: Recibo de pago listo para descargar")
@@ -47,6 +56,11 @@ def consultar_nir(driver, nir, escritura_numero):
         # Volver a intentar buscar el elemento
         driver.refresh()  # Actualizar la página
         consultar_nir(driver, nir, escritura_numero)  # Llamada recursiva
+
+# Función para cerrar el navegador al presionar ENTER
+def cerrar_navegador_con_enter(driver):
+    input("Presiona ENTER para cerrar el navegador...")
+    driver.quit()
 
 # Configuración de Selenium
 options = Options()
@@ -73,5 +87,5 @@ for row in ws.iter_rows(min_row=2, max_col=11):
         )
         consultar_nir(driver, nir, escritura_numero)
 
-# Cerrar el navegador al finalizar
-driver.quit()
+# Llamar a la función para cerrar el navegador al presionar ENTER
+cerrar_navegador_con_enter(driver)
