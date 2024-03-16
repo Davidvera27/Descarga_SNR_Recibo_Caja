@@ -28,7 +28,7 @@ def descargar_archivo(driver, row):
                 break
             time.sleep(1)
 
-        # Obtener el nombre del último archivo descargado y renombrarlo si se descargó correctamente
+        # Obtener el nombre del último archivo descargado
         if archivos_en_descargas:
             nombre_archivo = archivos_en_descargas[-1]
             numero_escritura = row[1].value
@@ -36,6 +36,6 @@ def descargar_archivo(driver, row):
             ruta_archivo_original = os.path.join("E:/Downloads", nombre_archivo)
             ruta_archivo_nuevo = os.path.join("E:/Downloads", nuevo_nombre)
             os.rename(ruta_archivo_original, ruta_archivo_nuevo)
-            print(f"Archivo PDF descargado y renombrado correctamente como {nuevo_nombre}")
+            print(f"Archivo PDF descargado y guardado correctamente como {nuevo_nombre}")
     except NoSuchElementException:
-        print(f"No se encontró el elemento para descargar el archivo para la escritura {row[1].value}")
+        print(f"Escritura {row[1].value} = 'Recibo de caja Pendiente'")
