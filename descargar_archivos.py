@@ -11,10 +11,10 @@ def descargar_archivo(driver, row):
         recibo_caja_link.click()  # Hacer clic en el enlace del recibo de caja
 
         # Esperar a que se cargue el recibo de caja
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "formDocsManager:j_idt197")))
+        WebDriverWait(driver, 7).until(EC.presence_of_element_located((By.ID, "formDocsManager:j_idt207")))
 
         # Hacer clic en el botón de descarga
-        descargar_btn = driver.find_element(By.ID, "formDocsManager:j_idt197")
+        descargar_btn = driver.find_element(By.ID, "formDocsManager:j_idt207")
         descargar_btn.click()
 
         # Esperar hasta que el archivo se descargue completamente
