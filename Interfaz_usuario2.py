@@ -1,11 +1,12 @@
 import sys
 import time
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLineEdit, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLineEdit, QLabel, QMessageBox
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import openpyxl
+import subprocess  # Para ejecutar scripts externos
 
 class InterfazUsuario(QWidget):
     def __init__(self):
@@ -33,6 +34,19 @@ class InterfazUsuario(QWidget):
         self.btn_autenticarse = QPushButton('Autenticarse')
         self.btn_autenticarse.clicked.connect(self.iniciar_sesion)
         layout.addWidget(self.btn_autenticarse)
+        
+                # Nuevos botones
+        self.btn_descargar_recibo = QPushButton('Descargar recibo de caja')
+        self.btn_descargar_recibo.clicked.connect(self.descargar_recibo_caja)
+        layout.addWidget(self.btn_descargar_recibo)
+
+        self.btn_consultar_estado_rel = QPushButton('Consultar estado en REL')
+        self.btn_consultar_estado_rel.clicked.connect(self.consultar_estado_rel)
+        layout.addWidget(self.btn_consultar_estado_rel)
+
+        self.btn_consultar_estado_rentas = QPushButton('Consultar estado de rentas')
+        self.btn_consultar_estado_rentas.clicked.connect(self.consultar_estado_rentas)
+        layout.addWidget(self.btn_consultar_estado_rentas)
 
         # Etiqueta y cuadro de texto para NIR
         self.lbl_nir = QLabel('NIR:')
@@ -77,6 +91,27 @@ class InterfazUsuario(QWidget):
         layout.addWidget(self.btn_buscar_certificado)
 
         self.setLayout(layout)
+        
+            # Funciones de los nuevos botones
+
+    def descargar_recibo_caja(self):
+        try:
+            subprocess.run(["python", "PYTHON/WebScraping/Excel/Descarga_SNR_Recibo_Caja/main.py"])
+        except Exception as e:
+            print("Error al ejecutar el script para descargar recibo de caja:", e)
+
+    def consultar_estado_rel(self):
+        try:
+            subprocess.run(["python", "PYTHON/WebScraping/Excel/Descarga_SNR_Recibo_Caja/Descargar_ReciboPago.py"])
+        except Exception as e:
+            print("Error al ejecutar el script para consultar estado en REL:", e)
+
+    def consultar_estado_rentas(self):
+        try:
+            subprocess.run(["python", "PYTHON/WebScraping/Excel/Descarga_SNR_Recibo_Caja/Descargar_Rentas.py"])
+        except Exception as e:
+            print("Error al ejecutar el script para consultar estado de rentas:", e)
+
 
     def iniciar_sesion(self):
         usuario = self.txt_usuario.text()
@@ -111,7 +146,20 @@ class InterfazUsuario(QWidget):
 
             # Redirigir directamente al Visor Documental
             self.driver.get("https://radicacion.supernotariado.gov.co/app/external/documentary-manager.dma")
+            
+            # Mostrar un mensaje al usuario de que la autenticación ha sido exitosa
+            QMessageBox.information(self, "Inicio de Sesión Exitoso", "¡Inicio de sesión exitoso!")
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Error", "Error durante el inicio de sesión: El sitio web no está disponible. Por favor, inténtelo de nuevo más tarde.")
 
+    def closeEvent(self, event):
+        # Cierre del navegador Selenium cuando se cierra la aplicación PyQt5
+        self.driver.quit()
+        event.accept()
+
+
+        try:
             # Mostrar las etiquetas y cuadros de texto para la consulta
             self.lbl_nir.setVisible(True)
             self.txt_nir.setVisible(True)
@@ -212,4 +260,7 @@ def main():
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
-    main()
+    app = QApplication(sys.argv)
+    ventana = InterfazUsuario()
+    ventana.show()
+    sys.exit(app.exec_())
