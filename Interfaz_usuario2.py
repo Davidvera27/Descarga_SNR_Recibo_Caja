@@ -35,7 +35,7 @@ class InterfazUsuario(QWidget):
         self.btn_autenticarse.clicked.connect(self.iniciar_sesion)
         layout.addWidget(self.btn_autenticarse)
         
-                # Nuevos botones
+        # Nuevos botones
         self.btn_descargar_recibo = QPushButton('Descargar recibo de caja')
         self.btn_descargar_recibo.clicked.connect(self.descargar_recibo_caja)
         layout.addWidget(self.btn_descargar_recibo)
@@ -92,7 +92,7 @@ class InterfazUsuario(QWidget):
 
         self.setLayout(layout)
         
-            # Funciones de los nuevos botones
+    # Funciones de los nuevos botones
 
     def descargar_recibo_caja(self):
         try:
@@ -145,11 +145,16 @@ class InterfazUsuario(QWidget):
             boton_aceptar.click()
 
             # Redirigir directamente al Visor Documental
+            
+            # Cambiado: Después de cerrar el mensaje emergente, mostrar las etiquetas y los cuadros de texto
+            self.show_labels_and_textboxes()
+            
             self.driver.get("https://radicacion.supernotariado.gov.co/app/external/documentary-manager.dma")
             
             # Mostrar un mensaje al usuario de que la autenticación ha sido exitosa
             QMessageBox.information(self, "Inicio de Sesión Exitoso", "¡Inicio de sesión exitoso!")
             
+       
         except Exception as e:
             QMessageBox.critical(self, "Error", "Error durante el inicio de sesión: El sitio web no está disponible. Por favor, inténtelo de nuevo más tarde.")
 
@@ -158,7 +163,7 @@ class InterfazUsuario(QWidget):
         self.driver.quit()
         event.accept()
 
-
+    def show_labels_and_textboxes(self):
         try:
             # Mostrar las etiquetas y cuadros de texto para la consulta
             self.lbl_nir.setVisible(True)
@@ -260,7 +265,4 @@ def main():
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ventana = InterfazUsuario()
-    ventana.show()
-    sys.exit(app.exec_())
+    main()
