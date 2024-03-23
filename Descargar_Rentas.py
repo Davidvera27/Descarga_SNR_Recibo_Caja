@@ -5,8 +5,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from PyQt5 import QtWidgets
-import threading
+from PyQt5 import QtWidgets, QtCore  # Importar QtCore
+from PyQt5.QtGui import QIcon
 
 class ConsultaAnexosInterfaz(QtWidgets.QWidget):
     def __init__(self, excel_file_path):
@@ -15,14 +15,44 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
         self.setGeometry(100, 100, 800, 400)
         self.excel_file_path = excel_file_path
         self.proceso_en_curso = False
+        self.icono_busqueda = QIcon("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\Icons\Search_icon.png")
+        self.icono_ver = QIcon("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\Icons\Ver_icon.png")
+
+
+        # Estilos
+        self.setStyleSheet("background-color: #f0f0f0;")
+
+        # Tabla de anexos
         self.tabla_anexos = QtWidgets.QTableWidget(self)
         self.tabla_anexos.setGeometry(50, 50, 700, 300)
-        self.tabla_anexos.setColumnCount(4)  # 4 columnas: ESCRITURA, ESCRITURA PROCESADA, ESTADO DE LIQUIDACIÓN y VER
-        self.tabla_anexos.setHorizontalHeaderLabels(
-            ["ESCRITURA", "RADICADO", "ESTADO DE LIQUIDACIÓN", "VER"])  # Nombres de las columnas
+        self.tabla_anexos.setColumnCount(4)
+        self.tabla_anexos.setHorizontalHeaderLabels(["ESCRITURA", "RADICADO", "ESTADO DE LIQUIDACIÓN", "VER"])
+        self.tabla_anexos.verticalHeader().setVisible(False)
+        self.tabla_anexos.horizontalHeader().setStyleSheet("QHeaderView::section { background-color: #d3d3d3; }")
+        self.tabla_anexos.setStyleSheet("color: #333; font-size: 12px;")
+        self.tabla_anexos.horizontalHeader().setStretchLastSection(True)
+
+        # Configurar el botón de consulta
+        self.boton_consultar = QtWidgets.QPushButton("ABRIR LIQUIDACIÓN DE RENTAS", self)
+        self.boton_consultar.setGeometry(50, 360, 250, 30)
+        self.boton_consultar.setIcon(self.icono_busqueda)  # Asignar el ícono de búsqueda al botón
+        self.boton_consultar.setIconSize(QtCore.QSize(24, 24))  # Ajustar el tamaño del ícono
+        self.boton_consultar.setStyleSheet("background-color: #4CAF50; color: white;")
+        self.boton_consultar.clicked.connect(self.consultar_anexos)
+        
+        
+
+        # Otras configuraciones
         self.chrome_options = Options()
-        self.chrome_options.add_argument("--headless")  # Ejecutar en modo headless
+        self.chrome_options.add_argument("--headless")
         self.driver = webdriver.Chrome(options=self.chrome_options)
+
+        self.cargar_iconos()
+
+    def cargar_iconos(self):
+        # Aquí cargarías los iconos desde tus archivos locales o descargarías desde internet
+        # Ejemplo de cómo se cargarían los iconos
+        self.icono_ver = QIcon("ver.png")
 
     def ver_anexo(self):
         boton = self.sender()
@@ -50,8 +80,6 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
 
         print("Proceso de consulta de anexos finalizado.")
         self.proceso_en_curso = False
-        # Mostrar la interfaz gráfica después de realizar el proceso invisible
-        self.show()
 
     def buscar_nir_para_consulta(self, excel_file_path):
         wb = openpyxl.load_workbook(excel_file_path, data_only=True)
@@ -73,13 +101,19 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
         self.tabla_anexos.setItem(fila, 0, QtWidgets.QTableWidgetItem(str(escritura_procesada)))
         self.tabla_anexos.setItem(fila, 1, QtWidgets.QTableWidgetItem(str(radicado)))
         self.tabla_anexos.setItem(fila, 2, QtWidgets.QTableWidgetItem(estado_liquidacion))
-        boton_ver = QtWidgets.QPushButton("VER")
-        boton_ver.clicked.connect(self.ver_anexo)
-        self.tabla_anexos.setCellWidget(fila, 3, boton_ver)  # Botón "VER" en la columna 3
 
+        # Configurar el botón VER en la columna 3
+        boton_ver = QtWidgets.QPushButton(self)
+        boton_ver.setText("VER")  # Establecer el texto del botón
+        boton_ver.setIcon(self.icono_ver)  # Asignar el ícono VER al botón
+        boton_ver.setIconSize(QtCore.QSize(24, 24))  # Ajustar el tamaño del ícono
+        boton_ver.setStyleSheet("QPushButton { text-align: left; padding-left: 5px; padding-right: 5px; }")  # Establecer estilo CSS
+        boton_ver.clicked.connect(self.ver_anexo)
+        self.tabla_anexos.setCellWidget(fila, 3, boton_ver)  # Asignar el botón a la celda de la tabla
+        
 if __name__ == "__main__":
     excel_file_path = r'C:\Users\DAVID\Desktop\DAVID\N-15\DAVID\LIBROS XLSM\HISTORICO.xlsm'
     app = QtWidgets.QApplication(sys.argv)
     ventana = ConsultaAnexosInterfaz(excel_file_path)
-    ventana.consultar_anexos()  # Llamar a la función para consultar anexos
+    ventana.show()
     sys.exit(app.exec_())
