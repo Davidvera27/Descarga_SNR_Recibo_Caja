@@ -41,6 +41,16 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
                                            "QPushButton:pressed { background-color: #4682B4; }")  # Establecer estilo CSS
         self.boton_consultar.clicked.connect(self.consultar_anexos)
 
+        # Configurar el botón de reiniciar
+        self.boton_reiniciar = QtWidgets.QPushButton("REINICIAR", self)
+        self.boton_reiniciar.setGeometry(320, 360, 250, 30)
+        self.boton_reiniciar.setIcon(self.icono_busqueda)  # Asignar el ícono de búsqueda al botón
+        self.boton_reiniciar.setIconSize(QtCore.QSize(24, 24))  # Ajustar el tamaño del ícono
+        self.boton_reiniciar.setStyleSheet("QPushButton { background-color: #ADD8E6; color: white; border: 1px solid #4682B4; border-radius: 5px; }"
+                                            "QPushButton:hover { background-color: #87CEEB; }"
+                                            "QPushButton:pressed { background-color: #4682B4; }")  # Establecer estilo CSS
+        self.boton_reiniciar.clicked.connect(self.reiniciar_proceso)
+
         # Otras configuraciones
         self.chrome_options = Options()
         self.chrome_options.add_argument("--headless")
@@ -111,6 +121,12 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
                                 "QPushButton:pressed { background-color: #4682B4; }")  # Establecer estilo CSS
         boton_ver.clicked.connect(self.ver_anexo)
         self.tabla_anexos.setCellWidget(fila, 3, boton_ver)  # Asignar el botón a la celda de la tabla
+
+    def reiniciar_proceso(self):
+        # Limpiar la tabla y reiniciar el proceso
+        self.tabla_anexos.clearContents()
+        self.tabla_anexos.setRowCount(0)
+        self.consultar_anexos()
 
 if __name__ == "__main__":
     excel_file_path = r'C:\Users\DAVID\Desktop\DAVID\N-15\DAVID\LIBROS XLSM\HISTORICO.xlsm'
