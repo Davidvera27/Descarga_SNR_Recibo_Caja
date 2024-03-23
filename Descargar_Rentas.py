@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from PyQt5 import QtWidgets, QtCore  # Importar QtCore
+from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QIcon
 
 class ConsultaAnexosInterfaz(QtWidgets.QWidget):
@@ -16,8 +16,7 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
         self.excel_file_path = excel_file_path
         self.proceso_en_curso = False
         self.icono_busqueda = QIcon("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\Icons\Search_icon.png")
-        self.icono_ver = QIcon("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\Icons\Ver_icon.png")
-
+        self.icono_ver = QIcon("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\Icons\ver_icon.png")
 
         # Estilos
         self.setStyleSheet("background-color: #f0f0f0;")
@@ -37,10 +36,10 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
         self.boton_consultar.setGeometry(50, 360, 250, 30)
         self.boton_consultar.setIcon(self.icono_busqueda)  # Asignar el ícono de búsqueda al botón
         self.boton_consultar.setIconSize(QtCore.QSize(24, 24))  # Ajustar el tamaño del ícono
-        self.boton_consultar.setStyleSheet("background-color: #4CAF50; color: white;")
+        self.boton_consultar.setStyleSheet("QPushButton { background-color: #ADD8E6; color: white; border: 1px solid #4682B4; border-radius: 5px; }"
+                                           "QPushButton:hover { background-color: #87CEEB; }"
+                                           "QPushButton:pressed { background-color: #4682B4; }")  # Establecer estilo CSS
         self.boton_consultar.clicked.connect(self.consultar_anexos)
-        
-        
 
         # Otras configuraciones
         self.chrome_options = Options()
@@ -107,10 +106,12 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
         boton_ver.setText("VER")  # Establecer el texto del botón
         boton_ver.setIcon(self.icono_ver)  # Asignar el ícono VER al botón
         boton_ver.setIconSize(QtCore.QSize(24, 24))  # Ajustar el tamaño del ícono
-        boton_ver.setStyleSheet("QPushButton { text-align: left; padding-left: 5px; padding-right: 5px; }")  # Establecer estilo CSS
+        boton_ver.setStyleSheet("QPushButton { text-align: left; padding-left: 5px; padding-right: 5px; background-color: #ADD8E6; border: 1px solid #4682B4; border-radius: 5px; }"
+                                "QPushButton:hover { background-color: #87CEEB; }"
+                                "QPushButton:pressed { background-color: #4682B4; }")  # Establecer estilo CSS
         boton_ver.clicked.connect(self.ver_anexo)
         self.tabla_anexos.setCellWidget(fila, 3, boton_ver)  # Asignar el botón a la celda de la tabla
-        
+
 if __name__ == "__main__":
     excel_file_path = r'C:\Users\DAVID\Desktop\DAVID\N-15\DAVID\LIBROS XLSM\HISTORICO.xlsm'
     app = QtWidgets.QApplication(sys.argv)
