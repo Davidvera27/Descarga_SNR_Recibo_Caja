@@ -1,0 +1,46 @@
+/* Estilo neutro por defecto para todos los botones */
+QPushButton {
+    background-color: #e61414; /* Color de fondo */
+    color: #000000; /* Color del texto */
+    border: 2px solid #000000; /* Borde */
+    border-radius: 5px; /* Bordes redondeados */
+    padding: 8px 16px; /* Espaciado interno */
+    font-size: 12px; /* Tamaño de fuente */
+    cursor: pointer; /* Cursor al pasar el ratón */
+    transition: background-color 0.3s ease; /* Transición suave para el color de fondo */
+}
+
+QPushButton:hover {
+    background-color: #ff9090; /* Cambio de color de fondo al pasar el ratón */
+    color: #ffffff;
+}
+
+/* Estilos para etiquetas */
+QLabel {
+    color: #333;
+    font-size: 14px;
+}
+
+/* Estilos para cuadros de texto */
+QLineEdit {
+    border: 2px solid #000000;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Estilos para la ventana principal */
+QWidget#mainWidget {
+    background-image: url("C:/ruta/completa/de/la/imagen/Notaria_img.jpeg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Para que la imagen se mantenga fija al hacer scroll */
+    background-size: cover; /* Para cubrir todo el área del widget */
+}
+
+/* Clase para etiquetas */
+.LabelUsuario {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+}
