@@ -1,12 +1,14 @@
 import sys
 import time
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLineEdit, QLabel, QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QLabel, QPushButton, QMessageBox, QProgressBar
+from PyQt5.QtCore import QFile, QTextStream
+import openpyxl
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import openpyxl
-import subprocess  # Para ejecutar scripts externos
+import subprocess
+from Iniciar_Sesion import iniciar_sesion
 
 class InterfazUsuario(QWidget):
     def __init__(self):
@@ -20,6 +22,8 @@ class InterfazUsuario(QWidget):
         # Usuario
         self.lbl_usuario = QLabel('Usuario:')
         self.txt_usuario = QLineEdit()
+        self.lbl_usuario.setObjectName("lblUsuario")  # Establecer un ID
+        self.txt_usuario.setObjectName("txtUsuario")  # Establecer un ID
         layout.addWidget(self.lbl_usuario)
         layout.addWidget(self.txt_usuario)
 
@@ -27,14 +31,23 @@ class InterfazUsuario(QWidget):
         self.lbl_contraseña = QLabel('Contraseña:')
         self.txt_contraseña = QLineEdit()
         self.txt_contraseña.setEchoMode(QLineEdit.Password)
+        self.lbl_contraseña.setObjectName("lblContraseña")  # Establecer un ID
+        self.txt_contraseña.setObjectName("txtContraseña")  # Establecer un ID
         layout.addWidget(self.lbl_contraseña)
         layout.addWidget(self.txt_contraseña)
 
         # Botón Autenticarse
-        self.btn_autenticarse = QPushButton('Autenticarse')
+        self.btn_autenticarse = QPushButton('Autenticarse', self)
         self.btn_autenticarse.clicked.connect(self.iniciar_sesion)
+        self.btn_autenticarse.setObjectName("btnAutenticarse")  # Establecer un ID
         layout.addWidget(self.btn_autenticarse)
         
+        # Botón Cerrar Sesión
+        self.btn_cerrar_sesion = QPushButton('Cerrar Sesión', self)
+        self.btn_cerrar_sesion.clicked.connect(self.cerrar_sesion)
+        self.btn_cerrar_sesion.setEnabled(False)  # Inicialmente deshabilitado
+        layout.addWidget(self.btn_cerrar_sesion)
+
         # Nuevos botones
         self.btn_descargar_recibo = QPushButton('Descargar recibo de caja')
         self.btn_descargar_recibo.clicked.connect(self.descargar_recibo_caja)
@@ -91,7 +104,21 @@ class InterfazUsuario(QWidget):
         layout.addWidget(self.btn_buscar_certificado)
 
         self.setLayout(layout)
+        # Aplicar el archivo CSS
+        self.setStyleSheet(self.load_stylesheet())
         
+            # Funciones de los nuevos botones y otras funciones
+
+    def load_stylesheet(self):
+        stylesheet = QFile("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\styles.css")
+        if stylesheet.open(QFile.ReadOnly | QFile.Text):
+            stream = QTextStream(stylesheet)
+            return stream.readAll()
+        else:
+            QMessageBox.critical(self, "Error", "No se pudo cargar el archivo de estilos CSS.")
+            return ""
+
+
     # Funciones de los nuevos botones
 
     def descargar_recibo_caja(self):
@@ -112,51 +139,34 @@ class InterfazUsuario(QWidget):
         except Exception as e:
             print("Error al ejecutar el script para consultar estado de rentas:", e)
 
-
     def iniciar_sesion(self):
         usuario = self.txt_usuario.text()
         contraseña = self.txt_contraseña.text()
-
-        # Abrir el navegador y navegar a la página de inicio de sesión
+        iniciar_sesion(usuario, contraseña)
+            
+    def cerrar_sesion(self):
         try:
-            self.driver = webdriver.Chrome()
-            self.driver.get("https://radicacion.supernotariado.gov.co/app/inicio.dma")
-
-            # Ingresar las credenciales y hacer clic en Autenticarse
-            usr_input = self.driver.find_element(By.ID, "formLogin:usrlogin")
-            usr_input.send_keys(usuario)
-
-            pwd_input = self.driver.find_element(By.ID, "formLogin:j_idt8")
-            pwd_input.send_keys(contraseña)
-
-            # Desactivar el botón mientras se procesa
-            self.btn_autenticarse.setEnabled(False)
-
-            # Esperar a que el botón de autenticación esté habilitado
-            WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, "formLogin:j_idt11")))
-            autenticarse_btn = self.driver.find_element(By.ID, "formLogin:j_idt11")
-            autenticarse_btn.click()
-
-            # Esperar a que aparezca la ventana emergente
-            info_bienvenida = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.ID, "infoBienvenida")))
-
-            # Encontrar y hacer clic en el botón Aceptar
-            boton_aceptar = info_bienvenida.find_element(By.ID, "formInfoBienvenida:id-acepta-bienvenida")
-            boton_aceptar.click()
-
-            # Redirigir directamente al Visor Documental
-            
-            # Cambiado: Después de cerrar el mensaje emergente, mostrar las etiquetas y los cuadros de texto
-            self.show_labels_and_textboxes()
-            
-            self.driver.get("https://radicacion.supernotariado.gov.co/app/external/documentary-manager.dma")
-            
-            # Mostrar un mensaje al usuario de que la autenticación ha sido exitosa
-            QMessageBox.information(self, "Inicio de Sesión Exitoso", "¡Inicio de sesión exitoso!")
-            
-       
+            if hasattr(self, 'driver'):
+                self.driver.quit()
+            self.btn_autenticarse.setEnabled(True)
+            self.btn_cerrar_sesion.setEnabled(False)
+            self.hide_labels_and_textboxes()  # Ocultar elementos de la interfaz
         except Exception as e:
-            QMessageBox.critical(self, "Error", "Error durante el inicio de sesión: El sitio web no está disponible. Por favor, inténtelo de nuevo más tarde.")
+            print("Error al cerrar sesión:", e)
+
+    def hide_labels_and_textboxes(self):
+        # Ocultar etiquetas y cuadros de texto
+        self.lbl_nir.setVisible(False)
+        self.txt_nir.setVisible(False)
+        self.btn_buscar_nir.setVisible(False)
+        self.lbl_escritura.setVisible(False)
+        self.txt_escritura.setVisible(False)
+        self.btn_buscar_escritura.setVisible(False)
+        self.lbl_certificado.setVisible(False)
+        self.txt_certificado.setVisible(False)
+        self.btn_buscar_certificado.setVisible(False)
+
+
 
     def closeEvent(self, event):
         # Cierre del navegador Selenium cuando se cierra la aplicación PyQt5
@@ -184,6 +194,7 @@ class InterfazUsuario(QWidget):
 
         except Exception as e:
             print("Error durante el inicio de sesión:", e)
+
 
     def buscar_nir(self):
         nir = self.txt_nir.text()
@@ -230,7 +241,7 @@ class InterfazUsuario(QWidget):
 
         finally:
             wb.close()
-
+            
     def realizar_busqueda_sitio_web(self, nir):
         try:
             # Navigate to the webpage where the search will be performed
