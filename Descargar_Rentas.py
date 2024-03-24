@@ -123,9 +123,10 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
         self.tabla_anexos.setCellWidget(fila, 3, boton_ver)  # Asignar el botón a la celda de la tabla
 
     def reiniciar_proceso(self):
-        # Limpiar la tabla y reiniciar el proceso
+        # Limpiar la tabla
         self.tabla_anexos.clearContents()
         self.tabla_anexos.setRowCount(0)
+        # Volver a consultar anexos
         self.consultar_anexos()
 
 if __name__ == "__main__":
