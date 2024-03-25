@@ -1,23 +1,26 @@
 import sys
 import time
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QLabel, QPushButton, QMessageBox, QProgressBar
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QLabel, QPushButton, QMessageBox
 from PyQt5.QtCore import QFile, QTextStream
-import openpyxl
-from selenium import webdriver
+from PyQt5.QtGui import QIcon, QPalette, QPixmap, QBrush
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import subprocess
-from Iniciar_Sesion import iniciar_sesion
+from Iniciar_Sesion import iniciar_sesion, cerrar_sesion, buscar_escritura, realizar_busqueda_sitio_web
 
 class InterfazUsuario(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
+        self.driver = None  # Inicializar el atributo driver como None
 
     def initUI(self):
         self.setWindowTitle('Inicio de Sesión Supernotariado')
         layout = QVBoxLayout()
+        # Configurar el fondo de la ventana con una imagen
+        palette = self.palette()
+        palette.setBrush(QPalette.Background, QBrush(QPixmap("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\Icons\wallpaper3.jpg")))
+        self.setPalette(palette)
 
         # Usuario
         self.lbl_usuario = QLabel('Usuario:')
@@ -38,26 +41,31 @@ class InterfazUsuario(QWidget):
 
         # Botón Autenticarse
         self.btn_autenticarse = QPushButton('Autenticarse', self)
+        self.btn_autenticarse.setIcon(QIcon("PYTHON/WebScraping/Excel/Descarga_SNR_Recibo_Caja/Icons/Authenticate_icon.png"))
         self.btn_autenticarse.clicked.connect(self.iniciar_sesion)
         self.btn_autenticarse.setObjectName("btnAutenticarse")  # Establecer un ID
         layout.addWidget(self.btn_autenticarse)
         
         # Botón Cerrar Sesión
         self.btn_cerrar_sesion = QPushButton('Cerrar Sesión', self)
-        self.btn_cerrar_sesion.clicked.connect(self.cerrar_sesion)
+        self.btn_cerrar_sesion.setIcon(QIcon("PYTHON/WebScraping/Excel/Descarga_SNR_Recibo_Caja/Icons/logout_icon.png"))
+        self.btn_cerrar_sesion.clicked.connect(self.iniciar_o_cerrar_sesion)
         self.btn_cerrar_sesion.setEnabled(False)  # Inicialmente deshabilitado
         layout.addWidget(self.btn_cerrar_sesion)
 
         # Nuevos botones
         self.btn_descargar_recibo = QPushButton('Descargar recibo de caja')
+        self.btn_descargar_recibo.setIcon(QIcon("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\Icons\Download_icon.png"))
         self.btn_descargar_recibo.clicked.connect(self.descargar_recibo_caja)
         layout.addWidget(self.btn_descargar_recibo)
 
         self.btn_consultar_estado_rel = QPushButton('Consultar estado en REL')
+        self.btn_consultar_estado_rel.setIcon(QIcon("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\Icons\search_process_icon.png"))
         self.btn_consultar_estado_rel.clicked.connect(self.consultar_estado_rel)
         layout.addWidget(self.btn_consultar_estado_rel)
 
         self.btn_consultar_estado_rentas = QPushButton('Consultar estado de rentas')
+        self.btn_consultar_estado_rentas.setIcon(QIcon("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\Icons\Rentas_icon.png"))
         self.btn_consultar_estado_rentas.clicked.connect(self.consultar_estado_rentas)
         layout.addWidget(self.btn_consultar_estado_rentas)
 
@@ -71,6 +79,7 @@ class InterfazUsuario(QWidget):
 
         # Botón Buscar para NIR
         self.btn_buscar_nir = QPushButton('Buscar')
+        self.btn_buscar_nir.setIcon(QIcon("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\Icons\Search_NIR_icon.png"))
         self.btn_buscar_nir.setVisible(False)
         self.btn_buscar_nir.clicked.connect(self.buscar_nir)
         layout.addWidget(self.btn_buscar_nir)
@@ -85,6 +94,7 @@ class InterfazUsuario(QWidget):
 
         # Botón Buscar para Escritura
         self.btn_buscar_escritura = QPushButton('Buscar')
+        self.btn_buscar_escritura.setIcon(QIcon("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\Icons\search_number_icon.png"))
         self.btn_buscar_escritura.setVisible(False)
         self.btn_buscar_escritura.clicked.connect(self.buscar_escritura)
         layout.addWidget(self.btn_buscar_escritura)
@@ -104,8 +114,12 @@ class InterfazUsuario(QWidget):
         layout.addWidget(self.btn_buscar_certificado)
 
         self.setLayout(layout)
+        # Conectar evento returnPressed a la función iniciar_sesion
+        self.txt_usuario.returnPressed.connect(self.iniciar_sesion)
+        self.txt_contraseña.returnPressed.connect(self.iniciar_sesion)
         # Aplicar el archivo CSS
         self.setStyleSheet(self.load_stylesheet())
+        
         
             # Funciones de los nuevos botones y otras funciones
 
@@ -139,20 +153,26 @@ class InterfazUsuario(QWidget):
         except Exception as e:
             print("Error al ejecutar el script para consultar estado de rentas:", e)
 
+    def iniciar_o_cerrar_sesion(self):
+        if self.sender() == self.btn_autenticarse:
+            self.iniciar_sesion()
+        elif self.sender() == self.btn_cerrar_sesion:
+            self.cerrar_sesion()
+
     def iniciar_sesion(self):
         usuario = self.txt_usuario.text()
         contraseña = self.txt_contraseña.text()
-        iniciar_sesion(usuario, contraseña)
-            
+        self.driver = iniciar_sesion(usuario, contraseña)  # Guardar el controlador devuelto
+        if self.driver is not None:
+            self.btn_autenticarse.setEnabled(False)
+            self.btn_cerrar_sesion.setEnabled(True)
+            self.show_labels_and_textboxes()  # Mostrar elementos ocultos después del inicio de sesión exitoso
+
     def cerrar_sesion(self):
-        try:
-            if hasattr(self, 'driver'):
-                self.driver.quit()
-            self.btn_autenticarse.setEnabled(True)
-            self.btn_cerrar_sesion.setEnabled(False)
-            self.hide_labels_and_textboxes()  # Ocultar elementos de la interfaz
-        except Exception as e:
-            print("Error al cerrar sesión:", e)
+        cerrar_sesion(self.driver)
+        self.btn_autenticarse.setEnabled(True)
+        self.btn_cerrar_sesion.setEnabled(False)
+        self.hide_labels_and_textboxes()  # Ocultar elementos después de cerrar sesión
 
     def hide_labels_and_textboxes(self):
         # Ocultar etiquetas y cuadros de texto
@@ -215,54 +235,15 @@ class InterfazUsuario(QWidget):
 
     def buscar_escritura(self):
         escritura = self.txt_escritura.text().strip()
-        print("Buscando Escritura:", escritura)
-        try:
-            wb = openpyxl.load_workbook(r"C:\Users\DAVID\Desktop\DAVID\N-15\DAVID\LIBROS XLSM\HISTORICO.xlsm", data_only=True)
-            sheet = wb["PRINCIPAL"]
-            column_b_values = [str(cell.value).strip() for cell in sheet['B'] if cell.value]
-            found = False
-            for row_index, value in enumerate(column_b_values):
-                if value == escritura:
-                    nir = sheet.cell(row=row_index + 1, column=4).value
-                    self.txt_nir.setText(str(nir))  # Set the NIR text
-                    found = True
-                    break
-
-            if found:
-                print("NIR encontrado:", nir)
-                return nir  # Return the found NIR
-            else:
-                print("Número de escritura no encontrado.")
-                return None  # Return None if the escritura is not found
-
-        except Exception as e:
-            print("Error al leer el archivo Excel:", e)
-            return None
-
-        finally:
-            wb.close()
+        nir = buscar_escritura(escritura, self.txt_nir)
+        if nir:
+            realizar_busqueda_sitio_web(self.driver, nir)
             
     def realizar_busqueda_sitio_web(self, nir):
-        try:
-            # Navigate to the webpage where the search will be performed
-            self.driver.get("URL_DEL_SITIO_WEB")
-
-            # Wait for the page to load and the NIR input field to be present
-            wait = WebDriverWait(self.driver, 10)
-            input_nir = wait.until(EC.presence_of_element_located((By.ID, "formFilterDocManager:j_idt48")))
-
-            # Input the NIR into the text field
-            input_nir.clear()
-            input_nir.send_keys(nir)
-
-            # Find and click the search button
-            btn_buscar = self.driver.find_element(By.ID, "formFilterDocManager:j_idt79")
-            btn_buscar.click()
-
-            # Wait for the search results to load (you can add more code here as needed)
-
-        except Exception as e:
-            print("Error al interactuar con el sitio web:", e)
+        if self.driver:
+            realizar_busqueda_sitio_web(self.driver, nir)
+        else:
+            print("El controlador del navegador no está inicializado.")
 
     def buscar_certificado(self):
         certificado = self.txt_certificado.text()
