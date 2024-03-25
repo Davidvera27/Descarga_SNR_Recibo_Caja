@@ -7,18 +7,23 @@ QPushButton {
     padding: 8px 16px; /* Espaciado interno */
     font-size: 12px; /* Tamaño de fuente */
     cursor: pointer; /* Cursor al pasar el ratón */
-    transition: background-color 0.3s ease; /* Transición suave para el color de fondo */
+    transition: background-color 0.5s ease; /* Transición suave para el color de fondo */
 }
 
 QPushButton:hover {
     background-color: #ff9090; /* Cambio de color de fondo al pasar el ratón */
-    color: #ffffff;
+    color: #ffffff; /* Cambio de color del texto al pasar el ratón */
+    transition: background-color 1s ease; /* Transición más lenta al pasar el ratón */
+}
+
+QPushButton:active {
+    animation: clickAnimation 0.3s ease;
 }
 
 /* Estilos para etiquetas */
 QLabel {
-    color: #333;
-    font-size: 14px;
+    color: #ffffff;
+    font-size: 16px;
 }
 
 /* Estilos para cuadros de texto */
