@@ -1,30 +1,78 @@
-import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from PyQt5.QtWidgets import QMessageBox
+import getpass
+import time
 
 def iniciar_sesion(usuario, contraseña):
+    driver = None
     try:
-        driver = webdriver.Chrome()
-        driver.get("https://radicacion.supernotariado.gov.co/app/inicio.dma")
+        # Inicializa el controlador de Chrome
+        options = webdriver.ChromeOptions()
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        driver = webdriver.Chrome(options=options)
 
-        usr_input = driver.find_element(By.ID, "formLogin:usrlogin")
-        usr_input.send_keys(usuario)
+        # URL del sitio web
+        url = "https://radicacion.supernotariado.gov.co/app/inicio.dma"
 
-        pwd_input = driver.find_element(By.ID, "formLogin:j_idt8")
-        pwd_input.send_keys(contraseña)
+        # Abre la página de inicio de sesión
+        driver.get(url)
 
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "formLogin:j_idt11"))).click()
+        # Espera hasta que el campo de usuario esté presente
+        campo_usuario = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "formLogin:usrlogin")))
+        campo_usuario.send_keys(usuario)
 
-        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "infoBienvenida")))
+        # Espera hasta que el campo de contraseña esté presente
+        campo_contraseña = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "formLogin:j_idt8")))
+        
+        # Ingresa la contraseña en el campo de texto
+        campo_contraseña.send_keys(contraseña)
 
-        driver.get("https://radicacion.supernotariado.gov.co/app/external/documentary-manager.dma")
+        # Haz clic en el botón "Autenticarse"
+        boton_autenticarse = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "formLogin:j_idt11")))
+        boton_autenticarse.click()
 
-        QMessageBox.information(None, "Inicio de Sesión Exitoso", "¡Inicio de sesión exitoso!")
+        # Espera hasta que la ventana emergente esté presente
+        ventana_emergente = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "infoBienvenida")))
+
+        # Haz clic en el botón "Aceptar" de la ventana emergente para cerrarla
+        boton_aceptar = WebDriverWait(ventana_emergente, 10).until(EC.element_to_be_clickable((By.ID, "formInfoBienvenida:id-acepta-bienvenida")))
+        boton_aceptar.click()
+        
+        # Esperar un breve tiempo para permitir que la página se cargue completamente
+        time.sleep(2)
+
+        # Hacer clic en el menú de hamburguesa
+        menu_hamburguesa = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "btn-menu")))
+        menu_hamburguesa.click()
+
+        # Esperar hasta que aparezca el menú desplegable
+        opciones_menu = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "navigation")))
+
+        # Encontrar y hacer clic en la opción "Visor Documental"
+        link_visor_documental = WebDriverWait(opciones_menu, 10).until(EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'Visor Documental')]")))
+        link_visor_documental.click()
+
+        # Espera a que el usuario presione Enter antes de cerrar el navegador
+        input("Presiona ENTER para cerrar el navegador.")
+
     except Exception as e:
-        QMessageBox.critical(None, "Error", "Error durante el inicio de sesión: El sitio web no está disponible. Por favor, inténtelo de nuevo más tarde.")
+        print("Error:", e)
+
     finally:
-        if 'driver' in locals():
+        # Cierra el navegador
+        if driver:
             driver.quit()
+
+if __name__ == "__main__":
+    try:
+        # Solicitar al usuario que ingrese su nombre de usuario y contraseña
+        usuario = input("Usuario: ")
+        contraseña = getpass.getpass("Contraseña: ")
+
+        # Inicia sesión con las credenciales proporcionadas
+        iniciar_sesion(usuario, contraseña)
+    
+    except KeyboardInterrupt:
+        print("\nProceso cancelado por el usuario.")
