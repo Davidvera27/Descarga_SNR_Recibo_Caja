@@ -1,8 +1,8 @@
 /* Estilo neutro por defecto para todos los botones */
 QPushButton {
-    background-color: #e61414; /* Color de fondo */
-    color: #000000; /* Color del texto */
-    border: 2px solid #000000; /* Borde */
+    background-color: hwb(0 8% 10% / 0.425); /* Color de fondo */
+    color: #ffffff; /* Color del texto */
+    border: 2px solid #ffffff; /* Borde */
     border-radius: 5px; /* Bordes redondeados */
     padding: 8px 16px; /* Espaciado interno */
     font-size: 12px; /* Tamaño de fuente */
