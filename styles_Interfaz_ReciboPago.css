@@ -1,0 +1,44 @@
+/* styles_Interfaz_ReciboPago.css */
+
+/* Estilos para la tabla */
+QTableWidget {
+    background-color: rgba(0, 0, 0, 0.281);
+    border: 1.2px solid #ff0000;
+}
+
+QTableWidget QHeaderView::section {
+    background-color: rgba(53, 53, 53, 0.527);
+    padding: 8px;
+    border: 1.2px solid #000;
+    font-size: 12px
+}
+
+QTableWidget::item {
+    padding: 8px;
+    font-size: 12px
+
+}
+
+/* Estilo para filas alternas */
+QTableWidget::item:nth-child(odd) {
+    background-color: rgba(255, 0, 0, 0.315);
+}
+
+/* Estilos para los botones */
+QPushButton {
+    background-color: hsla(0, 100%, 50%, 0.671); /* Rojo */
+    border: 1.5px solid #000;
+    color: #030303; /* Negro */
+    padding: 12px 10px;
+    text-align: center;
+    display: inline-flex;
+    font-size: 18px;
+    margin: 25px 0;
+    transition: background-color 1s ease; /* Transición suave */
+    cursor: pointer;
+}
+
+QPushButton:hover {
+    background-color: #800000; /* Rojo oscuro */
+    color: #fff; /* Blanco */
+}
