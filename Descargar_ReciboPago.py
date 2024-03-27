@@ -28,8 +28,8 @@ class MainWindow(QMainWindow):
         self.table_widget.setHorizontalHeaderLabels(["ESCRITURA", "Estado del Recibo", "ABRIR CASO"])
         self.layout.addWidget(self.table_widget)
         self.central_widget.setLayout(self.layout)
+        self.headless = True  # Por defecto, el navegador se ejecutará en modo Headless
 
-        # Configuración de Selenium
         options = Options()
         options.add_argument("--start-maximized")
         options.add_argument("--headless")  # Agregar esta línea para ejecutar en modo Headless
@@ -38,6 +38,10 @@ class MainWindow(QMainWindow):
 
         # Realizar la consulta inicial sobre todos los casos
         self.consultar_casos()
+        
+        # Cargar estilos CSS personalizados
+        with open("PYTHON/WebScraping/Excel/Descarga_SNR_Recibo_Caja/styles_Interfaz_ReciboPago.css", "r") as f:
+            self.setStyleSheet(f.read())
 
         # Mostrar la interfaz con los resultados de la consulta
         self.mostrar_interfaz()
@@ -86,11 +90,11 @@ class MainWindow(QMainWindow):
         abrir_button.clicked.connect(lambda _, nir_value=nir: self.abrir_caso(nir_value))
         self.table_widget.setCellWidget(row_position, 2, abrir_button)
         abrir_button.clicked.connect(self.mostrar_navegador_normal)
-
+        
     def mostrar_navegador_normal(self):
         # Esta función se llama cuando se presiona el botón "ABRIR"
         # Cambiar self.headless a False para ejecutar el navegador en modo normal
-        self.headless = False
+        self.headless = False        
 
     def abrir_caso(self, nir):
         try:
@@ -98,8 +102,7 @@ class MainWindow(QMainWindow):
             if self.headless:
                 # Configuración de Selenium en modo Headless
                 options = Options()
-                options.add_argument("--start-maximized")
-                options.add_argument("--headless")
+                options.add_argument("--start-maximized")                
                 service = Service(ChromeDriverManager().install())
                 self.driver = webdriver.Chrome(service=service, options=options)
             else:
