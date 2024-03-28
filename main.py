@@ -7,6 +7,7 @@ import os
 import time
 import openpyxl
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QPushButton, QWidget, QVBoxLayout
+from PyQt5.QtCore import QFile
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -15,8 +16,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Descarga de Documentos")
 
         self.table = QTableWidget()
-        self.table.setColumnCount(3)
-        self.table.setHorizontalHeaderLabels(["ESCRITURA", "ESTADO DEL RECIBO DE CAJA", "BOTÓN DE DESCARGA"])
+        self.table.setColumnCount(4)  # Se cambia el número de columnas a 4
+        self.table.setHorizontalHeaderLabels(["NIR", "ESCRITURA", "ESTADO DEL RECIBO DE CAJA", "BOTÓN DE DESCARGA"])  # Se cambia el título de la primera columna a "NIR"
 
         self.download_all_button = QPushButton("DESCARGAR DISPONIBLES")
         self.download_all_button.clicked.connect(self.download_all)
@@ -33,6 +34,11 @@ class MainWindow(QMainWindow):
         self.driver = self.iniciar_sesion("JULIAN.ZAPATA", "Notaria15")
         if self.driver:
             self.load_excel("C:/Users/DAVID/Desktop/DAVID/N-15/DAVID/LIBROS XLSM/HISTORICO.xlsm")
+        # Aplicar el estilo CSS al widget central
+        style_file = QFile("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\styles_Interfaz_main.css")
+        style_file.open(QFile.ReadOnly | QFile.Text)
+        style_sheet = str(style_file.readAll(), encoding='utf-8')
+        self.setStyleSheet(style_sheet)
 
     def iniciar_sesion(self, usuario, contraseña):
         try:
@@ -72,10 +78,11 @@ class MainWindow(QMainWindow):
         for row in sheet.iter_rows(min_row=2, max_col=11, values_only=False):
             if row[10].value == "DESCARGADA":
                 nir = row[3].value  # Valor de la columna "D"
+                escritura = row[1].value  # Se agrega la lectura de la columna "B"
                 if nir is not None:  # Verificar si el valor no es None
-                    self.search_documents(nir)
+                    self.search_documents(nir, escritura)  # Se pasa también el valor de la escritura
 
-    def search_documents(self, nir):
+    def search_documents(self, nir, escritura):  # Se añade un parámetro para la escritura
         try:
             # Navegar a la página de búsqueda
             self.driver.get("https://radicacion.supernotariado.gov.co/app/external/documentary-manager.dma")
@@ -115,17 +122,18 @@ class MainWindow(QMainWindow):
             if row_idx == -1:
                 row_idx = self.table.rowCount()
                 self.table.insertRow(row_idx)
-                self.table.setItem(row_idx, 0, QTableWidgetItem(str(nir)))  # Escritura
+                self.table.setItem(row_idx, 0, QTableWidgetItem(str(nir)))  # Nir
+                self.table.setItem(row_idx, 1, QTableWidgetItem(str(escritura)))  # Se añade la escritura
 
             # Actualizar el estado del recibo de caja en la fila correspondiente
             estado_recibo_caja = "RECIBO DE CAJA LISTO PARA DESCARGAR" if recibo_caja_disponible else "RECIBO DE CAJA NO DISPONIBLE"
-            self.table.setItem(row_idx, 1, QTableWidgetItem(estado_recibo_caja))  # Estado del recibo de caja
+            self.table.setItem(row_idx, 2, QTableWidgetItem(estado_recibo_caja))  # Estado del recibo de caja
 
             # Si el recibo de caja está disponible y no se ha agregado el botón de descarga, agregarlo
-            if recibo_caja_disponible and self.table.cellWidget(row_idx, 2) is None:
+            if recibo_caja_disponible and self.table.cellWidget(row_idx, 3) is None:
                 button = QPushButton("DESCARGAR")
                 button.clicked.connect(lambda _, nir=nir: self.download_document(nir))
-                self.table.setCellWidget(row_idx, 2, button)
+                self.table.setCellWidget(row_idx, 3, button)
 
         except Exception as e:
             print(f"Error durante la búsqueda del NIR {nir}: {e}")
@@ -133,7 +141,10 @@ class MainWindow(QMainWindow):
     def download_document(self, nir):
         try:
             # Realizar la búsqueda nuevamente para obtener el enlace de descarga
-            self.search_documents(nir)
+            for row_idx in range(self.table.rowCount()):
+                if self.table.item(row_idx, 0).text() == str(nir):
+                    escritura = self.table.item(row_idx, 1).text()
+                    self.search_documents(nir, escritura)
 
             # Hacer clic en el enlace del recibo de caja
             recibo_caja_link = self.driver.find_element(By.ID, "formDocsManager:j_idt84:0:j_idt158")
@@ -175,7 +186,7 @@ class MainWindow(QMainWindow):
             # Obtener el NIR de la fila actual
             nir = self.table.item(row_idx, 0).text()
             # Verificar si el estado del recibo de caja es "RECIBO DE CAJA LISTO PARA DESCARGAR"
-            estado_recibo_caja = self.table.item(row_idx, 1).text()
+            estado_recibo_caja = self.table.item(row_idx, 2).text()
             if estado_recibo_caja == "RECIBO DE CAJA LISTO PARA DESCARGAR":
                 self.download_document(nir)
 
@@ -185,4 +196,3 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())
-
