@@ -1,0 +1,58 @@
+/* Estilos para la ventana principal */
+QMainWindow {
+    background-color: #f0f0f0; /* Color de fondo */
+    border: 1px solid #ccc; /* Borde con color gris */
+}
+
+/* Estilos para la tabla */
+QTableWidget {
+    background-color: #effcff; /* Color de fondo blanco */
+    border: 1px solid #0026ff; /* Borde con color gris */
+}
+
+/* Estilos para las celdas de la tabla */
+QTableWidget QHeaderView::section {
+    background-color: #ccfcff; /* Color de fondo para las cabeceras */
+    border: 1px solid #8bc1ff; /* Borde con color gris */
+}
+
+QTableWidget QTableCornerButton::section {
+    background-color: #e0e0e0; /* Color de fondo para la esquina de la tabla */
+    border: 1px solid #55adff; /* Borde con color gris */
+}
+
+QTableWidget::item {
+    padding: 5px; /* Espaciado interno */
+    border-bottom: 1px solid #ccc; /* Borde inferior con color gris */
+}
+
+/* Estilo para filas alternas */
+QTableWidget::item:nth-child(odd) {
+    background-color: #ccfcff;
+}
+
+
+/* Estilos para los botones */
+QPushButton {
+    background-color: #bddaff;
+    color: #000000; /* Color de texto blanco */
+    border: 1px solid #007bff; /* Borde con color azul */
+    border-radius: 1.5px; /* Bordes redondeados */
+    padding: 2px 6px; /* Espaciado interno */
+    font-size: 12.5px; /* tamaño de la fuente*/
+}
+
+QPushButton:hover {
+    background-color: #4675a8; /* Cambio de color de fondo al pasar el mouse */
+    border: 1px solid #000000; /* Cambio de color de borde al pasar el mouse */
+    color: #bddaff;
+    font-size: 13px; /* tamaño de la fuente*/
+}
+
+QPushButton:pressed {
+    background-color: #888888; /* Cambio de color de fondo al presionar el botón */
+    border: 1px solid #0080ff; /* Cambio de color de borde al presionar el botón */
+    font-size: 10px; /* tamaño de la fuente*/
+}
+
+/* Otros estilos adicionales según sea necesario */
