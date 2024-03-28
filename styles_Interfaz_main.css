@@ -1,0 +1,155 @@
+/* styles_Interfaz_main.css */
+
+/* Estilos para la ventana principal */
+QMainWindow {
+    background-color: #f0f0f0; /* Color de fondo */
+    border: 1px solid #ccc; /* Borde con color gris */
+}
+
+/* Estilos para la tabla */
+QTableWidget {
+    background-color: #effcff; /* Color de fondo blanco */
+    border: 1px solid #0026ff; /* Borde con color gris */
+}
+
+/* Estilos para las celdas de la tabla */
+QTableWidget QHeaderView::section {
+    background-color: #ccfcff; /* Color de fondo para las cabeceras */
+    border: 1px solid #8bc1ff; /* Borde con color gris */
+}
+
+QTableWidget QTableCornerButton::section {
+    background-color: #e0e0e0; /* Color de fondo para la esquina de la tabla */
+    border: 1px solid #55adff; /* Borde con color gris */
+}
+
+QTableWidget::item {
+    padding: 5px; /* Espaciado interno */
+    border-bottom: 1px solid #ccc; /* Borde inferior con color gris */
+}
+
+/* Estilo para filas alternas */
+QTableWidget::item:nth-child(odd) {
+    background-color: #ccfcff;
+}
+
+/* Estilos para los botones */
+QPushButton {
+    background-color: #bddaff;
+    color: #000000; /* Color de texto blanco */
+    border: 1px solid #007bff; /* Borde con color azul */
+    border-radius: 1.5px; /* Bordes redondeados */
+    padding: 2px 6px; /* Espaciado interno */
+    font-size: 12.5px; /* tamaño de la fuente*/
+}
+
+QPushButton:hover {
+    background-color: #4675a8; /* Cambio de color de fondo al pasar el mouse */
+    border: 1px solid #000000; /* Cambio de color de borde al pasar el mouse */
+    color: #bddaff;
+    font-size: 13px; /* tamaño de la fuente*/
+}
+
+QPushButton:pressed {
+    background-color: #888888; /* Cambio de color de fondo al presionar el botón */
+    border: 1px solid #0080ff; /* Cambio de color de borde al presionar el botón */
+    font-size: 10px; /* tamaño de la fuente*/
+}
+
+/* Nuevas funcionalidades */
+
+/* Efecto de resaltado al pasar el cursor sobre la tabla */
+QTableWidget::item:hover {
+    background-color: #d3e8ff; /* Color de fondo al pasar el mouse */
+}
+
+/* Estilos para los campos de entrada de texto */
+QLineEdit {
+    background-color: #ffffff; /* Color de fondo blanco */
+    border: 1px solid #007bff; /* Borde con color azul */
+    border-radius: 1.5px; /* Bordes redondeados */
+    padding: 2px 6px; /* Espaciado interno */
+    font-size: 12.5px; /* tamaño de la fuente*/
+}
+
+QLineEdit:focus {
+    border-color: #000000; /* Cambio de color de borde al enfocar */
+}
+
+/* Botones de acción flotantes */
+QToolButton {
+    background-color: #bddaff; /* Color de fondo */
+    border: 1px solid #007bff; /* Borde con color azul */
+    border-radius: 50%; /* Borde circular */
+    padding: 6px; /* Espaciado interno */
+    font-size: 12.5px; /* tamaño de la fuente*/
+    margin: 5px; /* Margen */
+    position: fixed; /* Posición fija */
+    bottom: 20px; /* Distancia desde la parte inferior */
+    right: 20px; /* Distancia desde la derecha */
+}
+
+
+
+/* Íconos en los botones */
+QPushButton#buttonWithIcon {
+    background-color: #bddaff; /* Color de fondo */
+    color: #000000; /* Color de texto */
+    border: 1px solid #007bff; /* Borde con color azul */
+    border-radius: 1.5px; /* Bordes redondeados */
+    padding: 2px 26px 2px 6px; /* Espaciado interno */
+    font-size: 12.5px; /* tamaño de la fuente*/
+    background-image: url('icon.png'); /* Imagen de fondo */
+    background-repeat: no-repeat; /* No repetir la imagen de fondo */
+    background-position: 95% center; /* Posición de la imagen de fondo */
+}
+
+/* Estilos para los menús desplegables */
+QComboBox {
+    background-color: #ffffff; /* Color de fondo */
+    border: 1px solid #007bff; /* Borde con color azul */
+    border-radius: 1.5px; /* Bordes redondeados */
+    padding: 2px 6px; /* Espaciado interno */
+    font-size: 12.5px; /* tamaño de la fuente*/
+}
+
+/* Separadores y líneas divisorias */
+QFrame {
+    background-color: #ccc; /* Color de fondo */
+    height: 1px; /* Altura */
+    margin: 5px 0; /* Margen superior e inferior */
+}
+
+/* Estilos para etiquetas y texto */
+QLabel {
+    color: #000000; /* Color de texto */
+    font-size: 12.5px; /* tamaño de la fuente*/
+}
+
+/* Botones de radio y casillas de verificación personalizadas */
+QCheckBox, QRadioButton {
+    color: #000000; /* Color de texto */
+    font-size: 12.5px; /* tamaño de la fuente*/
+}
+
+/* Estilos para barras de desplazamiento */
+QScrollBar:vertical {
+    background-color: #f0f0f0; /* Color de fondo */
+    width: 10px; /* Ancho */
+}
+
+QScrollBar::handle:vertical {
+    background-color: #ccc; /* Color del control */
+    min-height: 20px; /* Altura mínima */
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    background-color: #007bff; /* Color de fondo */
+    height: 10px; /* Altura */
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background-color: #f0f0f0; /* Color de fondo */
+}
+
+/* Otros estilos adicionales según sea necesario */
