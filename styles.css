@@ -1,19 +1,18 @@
 /* Estilo neutro por defecto para todos los botones */
 QPushButton {
-    background-color: hwb(0 8% 10% / 0.425); /* Color de fondo */
-    color: #ffffff; /* Color del texto */
-    border: 2px solid #ffffff; /* Borde */
-    border-radius: 5px; /* Bordes redondeados */
-    padding: 8px 16px; /* Espaciado interno */
-    font-size: 12px; /* Tamaño de fuente */
-    cursor: pointer; /* Cursor al pasar el ratón */
-    transition: background-color 0.5s ease; /* Transición suave para el color de fondo */
+    background-color: #bddaff;
+    color: #000000; /* Color de texto blanco */
+    border: 1px solid #007bff; /* Borde con color azul */
+    border-radius: 1.5px; /* Bordes redondeados */
+    padding: 2px 6px; /* Espaciado interno */
+    font-size: 14px; /* tamaño de la fuente*/
 }
 
 QPushButton:hover {
-    background-color: #ff9090; /* Cambio de color de fondo al pasar el ratón */
-    color: #ffffff; /* Cambio de color del texto al pasar el ratón */
-    transition: background-color 1s ease; /* Transición más lenta al pasar el ratón */
+    background-color: #80bdff; /* Cambio de color de fondo al pasar el mouse */
+    border: 1px solid #000000; /* Cambio de color de borde al pasar el mouse */
+    color: #ffffff;
+    font-size: 15px; /* tamaño de la fuente*/
 }
 
 QPushButton:active {
@@ -28,10 +27,11 @@ QLabel {
 
 /* Estilos para cuadros de texto */
 QLineEdit {
-    border: 2px solid #000000;
-    border-radius: 5px;
-    padding: 5px;
-    font-size: 14px;
+    background-color: #f3fcf9; /* Color de fondo blanco */
+    border: 2px solid #00ffdd; /* Borde con color azul */
+    border-radius: 1.5px; /* Bordes redondeados */
+    padding: 2px 6px; /* Espaciado interno */
+    font-size: 13px; /* tamaño de la fuente*/
 }
 
 /* Estilos para la ventana principal */
