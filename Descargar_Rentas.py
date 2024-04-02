@@ -5,8 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from PyQt5 import QtWidgets, QtCore, QtWebEngineWidgets
-
+from PyQt5 import QtWidgets
 
 class ConsultaAnexosInterfaz(QtWidgets.QWidget):
     def __init__(self, excel_file_path):
@@ -17,7 +16,7 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
         self.proceso_en_curso = False
 
         # Cargar los estilos desde el archivo CSS
-        with open("PYTHON\WebScraping\Excel\Descarga_SNR_Recibo_Caja\styles_Interfaz_Rentas.css", "r") as css_file:
+        with open("PYTHON\\WebScraping\\Excel\\Descarga_SNR_Recibo_Caja\\styles_Interfaz_Rentas.css", "r") as css_file:
             self.setStyleSheet(css_file.read())
 
         # Campos de búsqueda
@@ -34,10 +33,12 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
         # Tabla de anexos
         self.tabla_anexos = QtWidgets.QTableWidget(self)
         self.tabla_anexos.setGeometry(50, 50, 700, 300)
-        self.tabla_anexos.setColumnCount(4)
-        self.tabla_anexos.setHorizontalHeaderLabels(["ESCRITURA", "RADICADO", "ESTADO DE LIQUIDACIÓN", "VER"])
+        self.tabla_anexos.setColumnCount(6)  # Agregar dos columnas más
+        self.tabla_anexos.setHorizontalHeaderLabels(["ESCRITURA", "RADICADO", "ESTADO DE LIQUIDACIÓN", "VER", "IMPRIMIR DOCUMENTO", "DESCARGAR DOCUMENTO"])
         self.tabla_anexos.verticalHeader().setVisible(False)
         self.tabla_anexos.horizontalHeader().setStretchLastSection(True)
+        # Configurar el tamaño de la tabla después de crearla
+        self.tabla_anexos.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
         # Configurar el botón de consulta
         self.boton_consultar = QtWidgets.QPushButton("ABRIR LIQUIDACIÓN DE RENTAS", self)
@@ -78,6 +79,14 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
             enlace_anexo.click()
         except Exception as e:
             print(f"Error al abrir el anexo: {e}")
+
+    def imprimir_documento(self):
+        # Implementar la funcionalidad de impresión del documento
+        print("Imprimir documento")
+
+    def descargar_documento(self):
+        # Implementar la funcionalidad de descarga del documento
+        print("Descargar documento")
 
     def consultar_anexos(self):
         radicados_a_consultar = self.buscar_nir_para_consulta(self.excel_file_path)
@@ -126,10 +135,15 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
         self.tabla_anexos.setItem(fila, 1, QtWidgets.QTableWidgetItem(str(radicado)))
         self.tabla_anexos.setItem(fila, 2, QtWidgets.QTableWidgetItem(estado_liquidacion))
 
-        boton_ver = QtWidgets.QPushButton(self)
-        boton_ver.setText("VER")
-        boton_ver.clicked.connect(self.ver_anexo)
-        self.tabla_anexos.setCellWidget(fila, 3, boton_ver)
+        # Configurar los botones de las nuevas columnas
+        self.configurar_boton(fila, 3, "VER", self.ver_anexo)
+        self.configurar_boton(fila, 4, "IMPRIMIR", self.imprimir_documento)
+        self.configurar_boton(fila, 5, "DESCARGAR", self.descargar_documento)
+
+    def configurar_boton(self, fila, columna, texto, funcion):
+        boton = QtWidgets.QPushButton(texto)
+        boton.clicked.connect(funcion)
+        self.tabla_anexos.setCellWidget(fila, columna, boton)
 
     def reiniciar_proceso(self):
         self.tabla_anexos.clearContents()
@@ -137,26 +151,19 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
         self.consultar_anexos()
 
     def filtrar_tabla_por_escritura(self, texto):
-        for fila in range(self.tabla_anexos.rowCount()):
-            item = self.tabla_anexos.item(fila, 0)
-            if item:
-                if texto.lower() in item.text().lower():
-                    self.tabla_anexos.setRowHidden(fila, False)
-                else:
-                    self.tabla_anexos.setRowHidden(fila, True)
+        self.filtrar_tabla_por_columna(texto, 0)
 
     def filtrar_tabla_por_radicado(self, texto):
-        for fila in range(self.tabla_anexos.rowCount()):
-            item = self.tabla_anexos.item(fila, 1)
-            if item:
-                if texto.lower() in item.text().lower():
-                    self.tabla_anexos.setRowHidden(fila, False)
-                else:
-                    self.tabla_anexos.setRowHidden(fila, True)
+        self.filtrar_tabla_por_columna(texto, 1)
 
+    def filtrar_tabla_por_columna(self, texto, columna):
+        for fila in range(self.tabla_anexos.rowCount()):
+            item = self.tabla_anexos.item(fila, columna)
+            if item:
+                self.tabla_anexos.setRowHidden(fila, texto.lower() not in item.text().lower())
 
 if __name__ == "__main__":
-    excel_file_path = r'C:\Users\DAVID\Desktop\DAVID\N-15\DAVID\LIBROS XLSM\HISTORICO.xlsm'
+    excel_file_path = r'C:\\Users\\DAVID\\Desktop\\DAVID\\N-15\\DAVID\\LIBROS XLSM\\HISTORICO.xlsm'
     app = QtWidgets.QApplication(sys.argv)
     ventana = ConsultaAnexosInterfaz(excel_file_path)
     ventana.show()
