@@ -32,7 +32,7 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
 
         # Tabla de anexos
         self.tabla_anexos = QtWidgets.QTableWidget(self)
-        self.tabla_anexos.setGeometry(50, 50, 700, 300)
+        self.tabla_anexos.setGeometry(50, 50, 1000, 300)
         self.tabla_anexos.setColumnCount(6)  # Agregar dos columnas más
         self.tabla_anexos.setHorizontalHeaderLabels(["ESCRITURA", "RADICADO", "ESTADO DE LIQUIDACIÓN", "VER", "IMPRIMIR DOCUMENTO", "DESCARGAR DOCUMENTO"])
         self.tabla_anexos.verticalHeader().setVisible(False)
@@ -54,6 +54,9 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
         self.chrome_options.add_argument("--headless")
         self.driver = webdriver.Chrome(options=self.chrome_options)
 
+        # Segunda instancia del navegador para visualizar los anexos
+        self.anexo_driver = None
+
         # Conectar los eventos textChanged de los QLineEdit a la función de filtrado
         self.line_edit_escritura.textChanged.connect(self.filtrar_tabla_por_escritura)
         self.line_edit_radicado.textChanged.connect(self.filtrar_tabla_por_radicado)
@@ -66,16 +69,16 @@ class ConsultaAnexosInterfaz(QtWidgets.QWidget):
         url_consulta = f"https://mercurio.antioquia.gov.co/mercurio/servlet/ControllerMercurio?command=anexos&tipoOperacion=abrirLista&idDocumento={radicado}&tipDocumento=R&now=Date()&ventanaEmergente=S&origen=NTR&proceso={proceso}"
         
         # Abrir el navegador controlado por Selenium en modo visible para mostrar los anexos
-        self.driver = webdriver.Chrome()
-        self.driver.get(url_consulta)
+        self.anexo_driver = webdriver.Chrome()
+        self.anexo_driver.get(url_consulta)
 
         try:
             # Esperar a que se cargue la tabla de anexos
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.anexo_driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "tr.contenido td a[href*='EmergenteImagen']"))
             )
             # Encontrar el enlace dentro de la tabla y hacer clic en él
-            enlace_anexo = self.driver.find_element(By.CSS_SELECTOR, "tr.contenido td a[href*='EmergenteImagen']")
+            enlace_anexo = self.anexo_driver.find_element(By.CSS_SELECTOR, "tr.contenido td a[href*='EmergenteImagen']")
             enlace_anexo.click()
         except Exception as e:
             print(f"Error al abrir el anexo: {e}")
