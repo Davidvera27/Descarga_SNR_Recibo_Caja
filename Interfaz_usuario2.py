@@ -15,7 +15,7 @@ class InterfazUsuario(QWidget):
         self.driver = None  # Inicializar el atributo driver como None
 
     def initUI(self):
-        self.setWindowTitle('Inicio de Sesión Supernotariado')
+        self.setWindowTitle('Panel - Supernotariado')
         layout = QVBoxLayout()
         # Configurar el fondo de la ventana con una imagen
         palette = self.palette()
